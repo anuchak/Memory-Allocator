@@ -169,7 +169,6 @@ int main()
 	for(; i < 20; i++)
 	{
 		struct test *a = myMalloc(sizeof(sample));
-		// printf("calling for a %dth time\n", i);
 		myFree(a);
 		b[i].a = i;
 		b[i].b = i;
