@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <pthread.h>
+#include <string.h>
 
 union ublockheader {
 	struct {
@@ -159,10 +160,62 @@ void myFree(void *addr)
 	pthread_mutex_unlock(&lock);
 }
 
+void *myCalloc(int total_elements, int each_element_size)
+{
+	if(total_elements < 1 || each_element_size < 1)
+		return NULL;
+
+	if(total_elements * each_element_size < -1)
+		return NULL;
+
+	size_t total_size = total_elements * each_element_size;
+
+	if(total_size / each_element_size != total_elements)
+		return NULL;
+
+	void *mem = myMalloc(total_size);
+
+	if(!mem)
+		return NULL;
+
+	memset(mem, 0, total_size);
+
+	return mem;
+}
+
+void *myRealloc(void *memblock, size_t s)
+{
+	if(!memblock || s < 1)
+		return NULL;
+
+	blockHeader* block = (blockHeader *)(memblock) - 1;
+
+	if(block->s.size >= s)
+		return memblock;
+
+	void *newBlock = myMalloc(s);
+
+	if(newBlock)
+	{
+		memcpy(newBlock, block, block->s.size + sizeof(block));
+
+		myFree(memblock);
+
+		return newBlock;
+	}
+	else
+	{
+		printf("\nUnexpected Error \n");
+
+		return memblock;
+	}
+}
+
+
 int main()
 {
 
-	int i = 0;
+	/*int i = 0;
 
 	struct test *b = myMalloc(20 * sizeof(sample));
 
@@ -176,7 +229,7 @@ int main()
 
 	myFree(b);
 
-	myFree(b);
+	myFree(b);*/
 
 	return 0;
 }
