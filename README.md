@@ -6,6 +6,6 @@
  
  Implicit Linked List used to track the blocks of memory allocated
  
- First Fit strategy utilized to allocate memory
+ Best Fit strategy utilized to allocate memory
  
  Further enhancements to be added ( in progress )
