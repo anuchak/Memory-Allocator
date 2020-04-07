@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <pthread.h>
 #include <string.h>
+#include <limits.h>
 
 union ublockheader {
 	struct {
@@ -73,14 +74,30 @@ void *myMalloc(size_t size)
 
 blockHeader *get_free_memblock(size_t size)
 {
-	blockHeader *curr = head;
+	blockHeader *temp = NULL, *curr = head;
+	
+	int check = INT_MAX;
+
 	while(curr)
 	{
-		if(curr->s.size >= size && curr->s.is_free)
+		if(curr->s.size == size && curr->s.is_free)
+		{
 			return curr;
-		curr = curr->s.next;
+		}
+		else if(curr->s.size > size && curr->s.is_free && curr->s.size - size < check)
+		{
+			check = curr->s.size - size;
+
+			temp = curr;
+
+			curr = curr->s.next;
+		}
+		else
+		{
+			curr = curr->s.next;
+		}
 	}
-	return NULL;
+	return temp;
 }
 
 void myFree(void *addr)
@@ -215,7 +232,7 @@ void *myRealloc(void *memblock, size_t s)
 int main()
 {
 
-	/*int i = 0;
+/*	int i = 0;
 
 	struct test *b = myMalloc(20 * sizeof(sample));
 
@@ -229,7 +246,8 @@ int main()
 
 	myFree(b);
 
-	myFree(b);*/
+	myFree(b);
+*/
 
 	return 0;
 }
